@@ -5,8 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'CodeGen Docs',
   tagline: 'Documentação Completa do CodeGen',
-  url: 'https://seu-dominio.com',
-  baseUrl: '/',
+  url: 'https://marialcjorge.github.io',
+  baseUrl: '/internal-docs-codegen/',
 
   favicon: 'img/favicon.ico',
 
