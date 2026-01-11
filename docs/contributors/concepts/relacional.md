@@ -95,12 +95,12 @@ async def get_tool_call_context(tool_call_id: str) -> ToolCallContext:
 :::tip Próximas Seções
 
 - 🔌 **[API Reference](../api/endpoints.md)** - Documentação completa dos endpoints
-- ⚙️ **[Configuração](../configuration/environment.md)** - Variáveis de ambiente e setup
-- 🔍 **[Observabilidade](../observability/logging.md)** - Logs, métricas e debugging
+- ⚙️ **[Configuração](../ops/configuration.md)** - Variáveis de ambiente e setup
+- 🔍 **[Observabilidade](../ops/observability.md)** - Logs, métricas e debugging
   :::
 
 :::info Conceitos Avançados
-Para entender padrões avançados como **Multi-Agent Systems** e **Long-Term Memory**, consulte a documentação de [Extensibilidade](../extensibility/custom-agents.md).
+Para entender padrões avançados como **Multi-Agent Systems** e **Long-Term Memory**, consulte a documentação de [Extensibilidade](./agent.md).
 :::
 
 :::warning Evolução dos Schemas

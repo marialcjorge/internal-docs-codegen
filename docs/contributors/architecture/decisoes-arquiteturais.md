@@ -54,7 +54,7 @@
 | **Redis Memory**          | ~100MB | ~1GB  |
 
 :::tip Próximos Conceitos
-Para entender melhor os **conceitos fundamentais** (Task, Agent, Session), consulte [Conceitos Fundamentais](./concepts.md).
+Para entender melhor os **conceitos fundamentais** (Task, Agent, Session), consulte [Conceitos Fundamentais](../concepts/visao-geral.md).
 :::
 
 :::warning Evolução Contínua
