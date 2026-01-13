@@ -8,7 +8,7 @@ const config: Config = {
   url: 'https://marialcjorge.github.io',
   baseUrl: '/internal-docs-codegen/',
 
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon codegen.png',
 
   future: {
     v4: true,
@@ -63,7 +63,7 @@ const config: Config = {
       title: 'CodeGen',
       logo: {
         alt: 'CodeGen Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo codegen.png',
       },
       items: [
         {
@@ -71,33 +71,28 @@ const config: Config = {
           docId: 'intro/overview',
           docsPluginId: 'contributors',
           position: 'left',
-          label: '👨‍💻 Para Contribuidores',
+          label: 'Para Contribuidores',
         },
         {
           type: 'doc',
           docId: 'getting-started', // ✅ users tem: getting-started, installation, faq, cli-commands
           docsPluginId: 'users',
           position: 'left',
-          label: '📚 Para Usuários',
+          label: 'Para Usuários',
         },
         {
           type: 'doc',
           docId: 'project', // ✅ about tem: project, roadmap, team
           docsPluginId: 'about',
           position: 'left',
-          label: 'ℹ️ Quem Somos',
-        },
-        {
-          href: 'https://github.com/seu-repo',
-          label: 'GitHub',
-          position: 'right',
+          label: 'Quem Somos',
         },
       ],
     },
 
     footer: {
       style: 'dark',
-      copyright: `Copyright © ${new Date().getFullYear()} Zup Labs. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Zup Labs`,
     },
 
     prism: {
