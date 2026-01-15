@@ -11,12 +11,12 @@ description: Comece a usar o CodeGen - seu assistente de desenvolvimento com IA
 
 **CodeGen** é o seu **assistente pessoal de desenvolvimento** com inteligência artificial que funciona direto no seu terminal. Imagine ter um desenvolvedor sênior ao seu lado, pronto para:
 
-- 💬 **Conversar** em linguagem natural sobre código
-- 🔧 **Gerar código** automaticamente baseado em suas instruções
-- ⚡ **Executar testes** e comandos automaticamente
-- 🧠 **Entender o contexto** completo do seu projeto
-- 🔄 **Se ajustar** com base nos resultados e erros
-- 🛡️ **Validar** suas mudanças antes de aplicar
+- **Conversar** em linguagem natural sobre código
+- **Gerar código** automaticamente baseado em suas instruções
+- **Executar testes** e comandos automaticamente
+- **Entender o contexto** completo do seu projeto
+- **Se ajustar** com base nos resultados e erros
+- **Validar** suas mudanças antes de aplicar
 
 **Em outras palavras:** Você descreve o que quer, e o CodeGen faz acontecer!
 
@@ -45,7 +45,7 @@ description: Comece a usar o CodeGen - seu assistente de desenvolvimento com IA
 - Descubra novas técnicas e padrões
 - Evolua como desenvolvedor
 
-### 🚀 Casos de Uso Reais
+### Casos de Uso Reais
 
 ```bash
 # Criar uma API completa
