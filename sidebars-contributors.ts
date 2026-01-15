@@ -30,7 +30,6 @@ const sidebars = {
             'concepts/agent',
             'concepts/spec-driven',
             'concepts/session',
-            'concepts/auxiliares',
             'concepts/relacional'
           ],
         },

@@ -1,39 +1,68 @@
 # Contract-Based Tools
 
-O sistema utiliza um **contrato dinâmico** de ferramentas:
+O CodeGen utiliza um **contrato dinâmico de ferramentas** (*contract-based tools*) para garantir que a orquestração feita pelo Backend seja **segura, controlada e alinhada às capacidades reais do Executor**.
 
-### 📋 Como Funciona
+Esse contrato não define apenas **quais ferramentas existem**, mas também **como, quando e até onde** elas podem ser utilizadas durante uma execução.
 
-1. **Executor** envia lista de tools suportadas no handshake
-2. **Backend** cria `Toolbelt` apenas com tools disponíveis
-3. **LLM** só pode invocar tools que o Executor suporta
-4. **Sistema** é agnóstico à implementação das tools
+Em termos práticos:
+> o Backend decide *o que* fazer, mas **só pode agir dentro dos limites explicitamente declarados pelo Executor**.
 
-### 🎯 Vantagens
 
-- ✅ **Flexibilidade**: Executors diferentes podem ter tools diferentes
-- ✅ **Segurança**: Backend não precisa acesso direto ao filesystem
-- ✅ **Extensibilidade**: Novas tools podem ser adicionadas dinamicamente
-- ✅ **Robustez**: Falhas de tools não afetam o backend
+### Como Funciona o Contrato
 
-### 📝 Exemplo de Contract
+O contrato de ferramentas é estabelecido **dinamicamente no handshake inicial** e segue as etapas abaixo:
+
+1. **Executor** envia, no handshake, a lista de tools que suporta
+2. **Backend** valida essa lista e constrói um **Toolbelt** apenas com tools disponíveis
+3. **LLM** só pode invocar tools que fazem parte desse Toolbelt
+4. O sistema permanece **agnóstico à implementação concreta** das tools
+
+Esse modelo garante que:
+- o Backend nunca assuma a existência de uma tool
+- diferentes executores possam ter capacidades distintas
+- o LLM opere sempre dentro de um **ambiente controlado por contrato**
+
+---
+
+### Vantagens do Modelo
+
+- **Flexibilidade**  
+  Diferentes executores (CLI local, VM, sandbox, cloud executor) podem expor conjuntos distintos de tools.
+
+- **Segurança**  
+  O Backend não precisa — e não pode — acessar diretamente o filesystem do usuário.
+
+- **Extensibilidade**  
+  Novas tools podem ser adicionadas dinamicamente sem alterar o backend central.
+
+- **Robustez**  
+  Falhas ou indisponibilidade de tools não comprometem a estabilidade do backend.
+
+---
+
+### Exemplo de Contrato (Implementação de Referência)
+
+O trecho abaixo ilustra uma **implementação de referência** do contrato de ferramentas no Backend.  
+Outras implementações são possíveis, desde que respeitem as mesmas regras de validação e escopo.
 
 ```python
-# Backend: Toolbelt valida tools do handshake
+# Backend: Toolbelt valida tools declaradas no handshake
+
 class Toolbelt:
     def __init__(self, handshake: HandshakePayload):
         self.tools = []
-      
+
+        # Tools conhecidas
         for tool_name in handshake.known_tools:
             schema = KNOWN_TOOLS_SCHEMAS.get(tool_name)
             if schema:
                 self.tools.append(schema)
-      
-        # Custom tools também suportadas
+
+        # Custom tools também são suportadas
         self.tools.extend([
             tool.model_dump() for tool in handshake.custom_tools
         ])
-```
+
 
 ## 🛡️ Safeguards e Error Handling
 
@@ -52,7 +81,9 @@ class Safeguards:
         return count >= min_repetition
 ```
 
-### ⏱️ Timeout Handling
+###  Timeout Handling
+Define limites temporais explícitos para a execução do contrato, evitando bloqueios indefinidos.
+No lado do Executor, falhas de conexão são tratadas com reconexão controlada:
 
 ```python
 # Backend: Message timeout
@@ -77,8 +108,8 @@ private async reconnectWithBackoff() {
 }
 ```
 
-### 🚨 Max Steps Protection
-
+###  Max Steps Protection
+Define um limite superior explícito para o número de passos da execução, evitando runs infinitas.
 ```python
 class Safeguards:
     def __init__(self, max_steps: int = 100):
@@ -87,3 +118,7 @@ class Safeguards:
     def is_exceeding_max_steps(self, current_step: int) -> bool:
         return current_step >= self.max_steps
 ```
+Esse limite:
+- protege o sistema contra execuções descontroladas
+- torna o custo da execução previsível
+- reforça o contrato como um processo finito

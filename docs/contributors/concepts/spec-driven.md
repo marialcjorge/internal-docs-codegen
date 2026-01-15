@@ -1,25 +1,73 @@
 # Spec-Driven Development
 
-### 🎯 O que é Spec-Driven?
+### O que é Spec-Driven?
 
-O **Spec-Driven Development** é uma abordagem onde mudanças complexas são **guiadas por especificações** detalhadas antes da implementação.
+**Spec-Driven Development** é uma abordagem em que mudanças complexas são **guiadas por uma especificação técnica explícita**, criada **antes da implementação**.
 
-```mermaid
-flowchart LR
-    Request[Solicitação do Usuário] --> Analyze[Análise do Maestro]
-    Analyze --> Spec[Geração de Spec]
-    Spec --> Review[Revisão Humana]
-    Review -->|Aprovado| Implement[Implementação]
-    Review -->|Rejeitado| Spec
-    Implement --> Test[Testes]
-    Test --> Complete[Finalização]
-  
-    style Spec fill:#e1f5fe
-    style Review fill:#fff3e0
-    style Implement fill:#f3e5f5
+No CodeGen, a Spec funciona como:
+- fonte única de verdade da mudança
+- contrato técnico de implementação
+- base para revisão humana
+- referência para geração de código e testes
+
+Em vez de “codar e corrigir”, o sistema **pensa, especifica, valida e só então executa**.
+
+---
+
+### Quando o Spec-Driven é Aplicado?
+
+O fluxo Spec-Driven é utilizado quando a solicitação:
+
+- envolve múltiplos arquivos ou camadas
+- exige decisões arquiteturais
+- altera contratos públicos (APIs, schemas, eventos)
+- possui alto risco de regressão
+- requer validação humana antes da execução
+
+Solicitações simples podem seguir um fluxo direto, sem geração de Spec.
+
+---
+
+### Fluxo Spec-Driven (Visão Geral)
+
+```ascii
+[User Request]
+      |
+      v
+[Analyze Complexity]
+      |
+      +-- Simple?
+      |      |
+      |      v
+      |  [Direct Implementation]
+      |          |
+      |        [Done]
+      |
+      +-- Complex?
+             |
+             v
+        [Generate Spec]
+             |
+             v
+        [Human Review]
+          |         |
+       Reject     Approve
+          |         |
+          v         v
+      [Refine]  [Implement from Spec]
+                       |
+                       v
+                    [Tests]
+                       |
+                       v
+                     [Done]
+
 ```
+### Estrutura de uma Spec
 
-### 📋 Estrutura de uma Spec
+A Spec é representada por um arquivo estruturado (CODEGEN.md) que descreve o que deve ser construído, não como o código interno funciona.
+
+Exemplo de estrutura:
 
 ```yaml
 # CODEGEN.md - Especificação do projeto
@@ -70,63 +118,51 @@ deployment:
   environment: "docker"
   ci_cd: "GitHub Actions"
 ```
+A Spec descreve intenção, estrutura e critérios, não detalhes de implementação.
+### Fluxo Spec-Driven
 
-### 🔄 Fluxo Spec-Driven
-
-```python
-class SpecDrivenWorkflow:
-    """
-    Workflow orientado a especificações.
-    """
-  
-    async def process_complex_request(self, request: str) -> TaskResult:
-        # 1. Analisar complexidade da solicitação
-        complexity = await self._analyze_complexity(request)
-      
-        if complexity.is_complex:
-            # 2. Gerar especificação detalhada
-            spec = await self._generate_spec(request)
-          
-            # 3. Solicitar aprovação humana
-            approval = await self._request_human_approval(spec)
-          
-            if not approval.approved:
-                return self._handle_rejection(approval.feedback)
-          
-            # 4. Implementar baseado na spec
-            return await self._implement_from_spec(spec)
-        else:
-            # Implementação direta para requests simples
-            return await self._direct_implementation(request)
-  
-    async def _generate_spec(self, request: str) -> ProjectSpec:
-        """Gera especificação detalhada."""
-        prompt = f"""
-        Analise esta solicitação e gere uma especificação técnica detalhada:
-      
-        SOLICITAÇÃO: {request}
-      
-        GERE UMA SPEC INCLUINDO:
-        - Arquitetura proposta
-        - Tecnologias a serem usadas  
-        - Estrutura de arquivos
-        - Endpoints (se aplicável)
-        - Schema de banco (se aplicável)
-        - Estratégia de testes
-        - Plano de implementação passo-a-passo
-        """
-      
-        return await self.llm_client.generate_spec(prompt)
+```ascii
+[User Request]
+      |
+      v
+[Analyze Complexity]
+      |
+      +-- Simple?
+      |      |
+      |      v
+      |  [Direct Implementation]
+      |          |
+      |        [Done]
+      |
+      +-- Complex?
+             |
+             v
+        [Generate Spec]
+             |
+             v
+        [Human Review]
+          |         |
+       Reject     Approve
+          |         |
+          v         v
+      [Refine]  [Implement from Spec]
+                       |
+                       v
+                    [Tests]
+                       |
+                       v
+                     [Done]
 ```
 
-### 💡 Vantagens do Spec-Driven
+
+### Vantagens do Spec-Driven
 
 | Vantagem                     | Descrição                                    | Benefício              |
 | ---------------------------- | ---------------------------------------------- | ----------------------- |
-| **🎯 Clareza**         | Especificação clara antes da implementação | Reduz retrabalho        |
-| **👥 Colaboração**   | Humanos podem revisar e ajustar specs          | Melhor alinhamento      |
-| **📊 Rastreabilidade** | Histórico completo de decisões               | Facilita manutenção   |
-| **🔄 Iteração**      | Specs podem ser refinadas antes do código     | Menor custo de mudança |
-| **🧪 Testabilidade**   | Critérios de aceite claros desde o início    | Testes mais eficazes    |
+| **Clareza**         | Especificação clara antes da implementação | Reduz retrabalho        |
+| **Colaboração**   | Humanos podem revisar e ajustar specs          | Melhor alinhamento      |
+| **Rastreabilidade** | Histórico completo de decisões               | Facilita manutenção   |
+| **Iteração**      | Specs podem ser refinadas antes do código     | Menor custo de mudança |
+| **Testabilidade**   | Critérios de aceite claros desde o início    | Testes mais eficazes    |
 
 ---

@@ -39,13 +39,13 @@ stateDiagram-v2
 
 ### Ciclo de Vida de uma Task
 
-| Estado              | Descrição                               | Próximos Estados                        | Ações Possíveis       |
-| ------------------- | ----------------------------------------- | ---------------------------------------- | ------------------------ |
-| **PENDING**   | Task foi criada, aguardando processamento | `RUNNING`                              | ▶️ Iniciar execução  |
-| **RUNNING**   | Maestro está executando a task           | `COMPLETED`, `FAILED`, `CANCELLED` | ⏸️ Pausar, ❌ Cancelar |
-| **COMPLETED** | Task finalizada com sucesso               | -                                        | 📊 Ver logs, 🔄 Clonar   |
-| **FAILED**    | Falha na execução                       | `RUNNING`                              | 🔄 Retry, 🔍 Debug       |
-| **CANCELLED** | Cancelada pelo usuário                   | -                                        | 📊 Ver logs              |
+| Estado              | Descrição                               | Próximos Estados                        | Ações Possíveis |
+| ------------------- | ----------------------------------------- | ---------------------------------------- | --------------- |
+| **PENDING**   | Task foi criada, aguardando processamento | `RUNNING`                              | Iniciar execução |
+| **RUNNING**   | Maestro está executando a task           | `COMPLETED`, `FAILED`, `CANCELLED` |  Pausar, Cancelar |
+| **COMPLETED** | Task finalizada com sucesso               | -                                        | Ver logs, Clonar |
+| **FAILED**    | Falha na execução                       | `RUNNING`                              | Retry, Debug |
+| **CANCELLED** | Cancelada pelo usuário                   | -                                        | Ver logs      |
 
 ### Exemplos de Tasks
 

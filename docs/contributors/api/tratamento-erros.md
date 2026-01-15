@@ -1,6 +1,6 @@
-## Tratamento de Erros
+# Tratamento de Erros
 
-### 📊 Códigos de Status HTTP
+### Códigos de Status HTTP
 
 | Código | Descrição       | Ação Recomendada                     |
 | ------- | --------------- | -------------------------------------- |
@@ -14,7 +14,7 @@
 | `500` | Internal Server Error | Tente novamente ou contate suporte     |
 | `503` | Service Unavailable | Serviço temporariamente indisponível |
 
-### 🔧 Formato de Erros
+### Formato de Erros
 
 ```json
 {
@@ -32,7 +32,7 @@
 }
 ```
 
-### 📋 Códigos de Erro Específicos
+### Códigos de Erro Específicos
 
 | Código                         | Descrição                                 | HTTP Status |
 | ------------------------------- | ------------------------------------------- | ----------- |

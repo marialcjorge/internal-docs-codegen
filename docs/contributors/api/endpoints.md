@@ -31,7 +31,7 @@ Todas as requisições devem incluir um **Bearer Token** no header `Authorizatio
 Authorization: Bearer cgn_1234567890abcdef
 ```
 
-### 🔒 Obter API Key
+### Obter API Key
 
 ```bash
 # Via CLI do CodeGen
@@ -41,7 +41,7 @@ codegen auth login
 https://dashboard.codegen.com/api-keys
 ```
 
-### 🛡️ Headers Obrigatórios
+### Headers Obrigatórios
 
 ```http
 Content-Type: application/json
@@ -53,15 +53,15 @@ User-Agent: CodeGen-Client/1.0
 
 ## Base URL e Versionamento
 
-### 🔗 URLs de Ambiente
+###  URLs de Ambiente
 
 | Ambiente              | Base URL                               | Descrição               |
 | --------------------- | -------------------------------------- | ------------------------- |
-| **Production**  | `https://api.codegen.com/v1`         | ✅ Produção estável    |
-| **Staging**     | `https://staging-api.codegen.com/v1` | 🧪 Testes pré-produção |
-| **Development** | `http://localhost:8000/v1`           | 💻 Desenvolvimento local  |
+| **Production**  | `https://api.codegen.com/v1`         |  Produção estável    |
+| **Staging**     | `https://staging-api.codegen.com/v1` |  Testes pré-produção |
+| **Development** | `http://localhost:8000/v1`           | Desenvolvimento local  |
 
-### 📊 Versionamento
+###  Versionamento
 
 ```http
 # Versão via URL (recomendado)
@@ -78,15 +78,15 @@ Accept: application/vnd.codegen.v1+json
 
 | Método    | Endpoint                         | Descrição                     | Autenticação  |
 | ---------- | -------------------------------- | ----------------------------- | --------------- |
-| `POST`   | `/tasks`                       |Cria nova tarefa de desenvolvimento | ✅ Obrigatória |
-| `GET`    | `/tasks/{task_id}`             | Recupera informações de uma tarefa | ✅ Obrigatória |
-| `GET`    | `/tasks/{task_id}/logs`        | Recupera logs históricos da tarefa | ✅ Obrigatória |
-| `POST`   | `/tasks/{task_id}/actions`     | Envia ação manual para o Maestro | ✅ Obrigatória |
-| `DELETE` | `/tasks/{task_id}`             | Cancela tarefa em execução    | ✅ Obrigatória |
-| `WS`     | `/ws/tasks/{task_id}/stream`   | Canal bidirecional com Maestro | ✅ Obrigatória |
-| `GET`    | `/sse/tasks/{task_id}/updates` | Stream de atualizações (read-only) | ✅ Obrigatória |
-| `GET`    | `/healthz`                     | Health check (Liveness)       | ❌ Pública     |
-| `GET`    | `/readiness`                   | Readiness check               | ❌ Pública     |
+| `POST`   | `/tasks`                       |Cria nova tarefa de desenvolvimento |  Obrigatória |
+| `GET`    | `/tasks/{task_id}`             | Recupera informações de uma tarefa | Obrigatória |
+| `GET`    | `/tasks/{task_id}/logs`        | Recupera logs históricos da tarefa |  Obrigatória |
+| `POST`   | `/tasks/{task_id}/actions`     | Envia ação manual para o Maestro |  Obrigatória |
+| `DELETE` | `/tasks/{task_id}`             | Cancela tarefa em execução    |  Obrigatória |
+| `WS`     | `/ws/tasks/{task_id}/stream`   | Canal bidirecional com Maestro |  Obrigatória |
+| `GET`    | `/sse/tasks/{task_id}/updates` | Stream de atualizações (read-only) |  Obrigatória |
+| `GET`    | `/healthz`                     | Health check (Liveness)       | Pública     |
+| `GET`    | `/readiness`                   | Readiness check               |  Pública     |
 
 ---
 
@@ -194,7 +194,7 @@ type TaskStatus = "PENDING" | "RUNNING" | "COMPLETED" | "FAILED" | "CANCELLED";
 }
 ```
 
-#### Exemplos de Código
+#### Outros exemplos
 
 **cURL:**
 
@@ -209,84 +209,7 @@ curl -X POST https://api.codegen.com/v1/tasks \
   }'
 ```
 
-**Python:**
 
-```python
-import httpx
-import asyncio
-
-async def create_task():
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            "https://api.codegen.com/v1/tasks",
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": "Bearer cgn_1234567890abcdef"
-            },
-            json={
-                "prompt": "Refatore o módulo de autenticação para usar async/await",
-                "repo_url": "https://github.com/myorg/api-backend",
-                "preferences": {
-                    "code_style": "black",
-                    "test_framework": "pytest"
-                }
-            }
-        )
-      
-        if response.status_code == 201:
-            task = response.json()["task"]
-            print(f"✅ Task criada: {task['id']}")
-            return task
-        else:
-            print(f"❌ Erro: {response.status_code} - {response.text}")
-
-# asyncio.run(create_task())
-```
-
-**TypeScript:**
-
-```typescript
-interface CodeGenClient {
-  createTask(request: TaskCreateRequest): Promise<TaskCreateResponse>;
-}
-
-class CodeGenAPIClient implements CodeGenClient {
-  constructor(private apiKey: string, private baseUrl = "https://api.codegen.com/v1") {}
-
-  async createTask(request: TaskCreateRequest): Promise<TaskCreateResponse> {
-    const response = await fetch(`${this.baseUrl}/tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.apiKey}`
-      },
-      body: JSON.stringify(request)
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-    }
-
-    return response.json();
-  }
-}
-
-// Uso
-const client = new CodeGenAPIClient("cgn_1234567890abcdef");
-
-const task = await client.createTask({
-  prompt: "Implemente cache Redis para a API de produtos",
-  repo_url: "https://github.com/ecommerce/api",
-  preferences: {
-    ai_model: "gpt-4",
-    code_style: "google"
-  }
-});
-
-console.log("Task ID:", task.task.id);
-```
-
----
 
 ### GET /tasks/
 

@@ -33,7 +33,7 @@ eventSource.addEventListener("message", (event) => {
 // Tool executions
 eventSource.addEventListener("tool", (event) => {
   const data = JSON.parse(event.data);
-  console.log(`Tool ${data.tool_name}:`, data.success ? "✅" : "❌");
+  console.log(`Tool ${data.tool_name}:`, data.success ? "Yes" : "No");
 });
 
 // Task completion

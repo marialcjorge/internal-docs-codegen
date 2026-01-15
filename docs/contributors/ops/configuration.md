@@ -9,13 +9,13 @@ O **CodeGen** utiliza um sistema robusto de configuração baseado em **variáve
 - **Portabilidade** - Deploy consistente em qualquer infraestrutura
 - **Manutenibilidade** - Configuração centralizada e validada
 
-:::info Filosofia de Configuração
+:::info Princípios Configuração
 Seguimos os princípios do **12-Factor App**: configurações no ambiente, nunca no código. Cada ambiente (dev/staging/prod) possui suas próprias configurações, mas mantém a mesma interface.
 :::
 
 ---
 
-## 🔑 Variáveis de Ambiente Obrigatórias
+## Variáveis de Ambiente Obrigatórias
 
 Essas variáveis **DEVEM** estar definidas para o sistema funcionar:
 
@@ -49,9 +49,9 @@ DATABASE_URL=postgresql+asyncpg://codegen:prod789@rds-prod.amazonaws.com:5432/co
 
 **Impactos:**
 
-- ❌ **URL inválida**: Sistema não inicia
-- ⚠️ **Credenciais erradas**: Falha na autenticação
-- 🐌 **Host lento**: Degradação de performance
+-  **URL inválida**: Sistema não inicia
+-  **Credenciais erradas**: Falha na autenticação
+-  **Host lento**: Degradação de performance
 
 #### **REDIS_URL**
 
@@ -69,9 +69,9 @@ REDIS_URL=redis://password456@elasticache-prod.amazonaws.com:6379/0
 
 **Impactos:**
 
-- ❌ **Redis offline**: Falha na inicialização, sessões perdidas
-- 🔒 **Auth falhou**: Não consegue conectar
-- 📊 **DB errado**: Conflito com outros serviços
+-  **Redis offline**: Falha na inicialização, sessões perdidas
+-  **Auth falhou**: Não consegue conectar
+-  **DB errado**: Conflito com outros serviços
 
 #### **OPENAI_API_KEY**
 
@@ -91,9 +91,9 @@ ANTHROPIC_API_KEY=sk-ant-api123...
 
 **Impactos:**
 
-- ❌ **Chave inválida**: LLM não funciona, tasks falham
-- 💰 **Limites atingidos**: Rate limiting, custos altos
-- 🔒 **Chave vazada**: Uso não autorizado, cobrança indevida
+-  **Chave inválida**: LLM não funciona, tasks falham
+-  **Limites atingidos**: Rate limiting, custos altos
+-  **Chave vazada**: Uso não autorizado, cobrança indevida
 
 ---
 
@@ -141,9 +141,9 @@ Configurações com valores padrão que podem ser customizadas:
 
 ---
 
-## 🌍 Configuração por Ambiente
+##  Configuração por Ambiente
 
-### 🚀 Development (.env.development)
+###  Development (.env.development)
 
 ```bash
 # ==============================================
@@ -192,7 +192,7 @@ ENABLE_DEBUG_ENDPOINTS=true
 HOT_RELOAD=true
 ```
 
-### 🧪 Staging (.env.staging)
+###  Staging (.env.staging)
 
 ```bash
 # ==============================================
@@ -246,7 +246,7 @@ ENABLE_DEBUG_ENDPOINTS=true  # Para debugging em staging
 MOCK_EXTERNAL_APIS=false
 ```
 
-### 🏭 Production (.env.production)
+###  Production (.env.production)
 
 ```bash
 # ==============================================
@@ -325,26 +325,26 @@ HEALTH_CHECK_INTERVAL=30
 :::warning Configuração de Produção
 Em **produção**, use sempre:
 
-- 🔐 **Secrets Manager** (AWS/GCP) ou **Vault** para credenciais
-- 🚫 **Nunca** arquivos `.env` commitados
-- ✅ **Kubernetes Secrets** ou **Docker Secrets**
-- 🔍 **Auditoria** habilitada sempre
+-  **Secrets Manager** (AWS/GCP) ou **Vault** para credenciais
+-  **Nunca** arquivos `.env` commitados
+-  **Kubernetes Secrets** ou **Docker Secrets**
+-  **Auditoria** habilitada sempre
   :::
 
 ---
 
-##  Segredos e Segurança
+##  Segurança
 
-### 🛡️ Boas Práticas de Segredos
+###  Boas Práticas 
 
 :::danger Nunca Faça Isso
 
 ```bash
-# ❌ NUNCA commitar credenciais
+#  NUNCA commitar credenciais
 OPENAI_API_KEY=sk-proj-abc123def456...
 DATABASE_URL=postgresql://user:PASSWORD@host/db
 
-# ❌ NUNCA usar credenciais simples em produção
+#  NUNCA usar credenciais simples em produção
 SECRET_KEY=simple-password
 DATABASE_URL=postgresql://admin:admin@localhost/db
 ```
@@ -354,12 +354,12 @@ DATABASE_URL=postgresql://admin:admin@localhost/db
 :::tip Faça Assim
 
 ```bash
-# ✅ Usar referências para secrets managers
+# Usar referências para secrets managers
 OPENAI_API_KEY=${OPENAI_API_KEY_FROM_VAULT}
 DATABASE_URL=${DATABASE_URL_FROM_AWS_SECRETS}
 SECRET_KEY=${SECRET_KEY_FROM_KUBERNETES_SECRET}
 
-# ✅ Credenciais complexas e rotacionadas
+#  Credenciais complexas e rotacionadas
 SECRET_KEY=generated-256-bit-key-from-secrets-manager
 DATABASE_URL=postgresql://user:complex-rotated-password@rds-cluster/db
 ```

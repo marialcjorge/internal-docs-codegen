@@ -1,109 +1,115 @@
 # Fluxos
 
-### 1. 🤝 Inicialização e Handshake
+### 1. Inicialização e Handshake
 
-```mermaid
-sequenceDiagram
-    participant Dev as Desenvolvedor (Terminal)
-    participant Exec as Executor (Local)
-    participant Backend as Backend (Remoto)
-    participant Redis as Redis
+```ascii
++-----------------------+        +---------------------+        +---------------------+        +--------+
+| Dev (Terminal)        |        | Executor (Local)    |        | Backend (Remoto)    |        | Redis  |
++-----------------------+        +---------------------+        +---------------------+        +--------+
+          |                               |                               |                        |
+          | $ codegen "crie endpoint"     |                               |                        |
+          |------------------------------>|                               |                        |
+          |                               |  (Executor INICIA conexão)    |                        |
+          |                               |------------------------------>|  WS Connect            |
+          |                               |                               |----------------------->|
+          |                               |<------------------------------|  Accepted              |
+          |                               |------------------------------>|  Handshake (tools+ctx) |
+          |                               |                               |  Valida + Toolbelt     |
+          |                               |                               |----------------------->|  Save handshake
+          |                               |<------------------------------|  Handshake OK          |
+          |                               |                               |                        |
+          v                               v                               v                        v
 
-    Note over Dev: $ codegen "crie um endpoint"
-    Dev->>Exec: Executa CLI local
-    Note over Exec: Executor INICIA conexão ⬆️
-    Exec->>Backend: WebSocket Connect (wss://backend/ws/tasks/123)
-    Backend->>Exec: Connection Accepted ✅
-    Exec->>Backend: Handshake (tools disponíveis + context)
-    Backend->>Backend: Valida tools e cria Toolbelt
-    Backend->>Redis: Salva handshake payload
-    Backend->>Exec: Handshake OK, pronto para receber comandos
 ```
-
 
 **Nota:** O **Executor** (cliente) é quem **inicia** a conexão, não o Backend.
 
-### 2. 🚀 Bootstrap e Context Loading
+### 2. Bootstrap e Context Loading
 
-```mermaid
-sequenceDiagram
-    participant Backend as Backend (Cérebro)
-    participant Exec as Executor (Mãos)
-    participant FS as File System (Local)
+```ascii
++---------------------+        +---------------------+        +-------------------------+
+| Backend (Cérebro)   |        | Executor (Mãos)     |        | File System (Local)     |
++---------------------+        +---------------------+        +-------------------------+
+          |                               |                               |
+          | run_tool(GetWorkingDirectory) |                               |
+          |------------------------------>|                               |
+          |                               |  pwd                          |
+          |                               |------------------------------>|
+          |                               |<------------------------------|  /home/user/project
+          | tool_result(success, path)    |                               |
+          |<------------------------------|                               |
+          |                               |                               |
+          | run_tool(ReadFolder, ".")     |                               |
+          |------------------------------>|                               |
+          |                               |  ls -la                       |
+          |                               |------------------------------>|
+          |                               |<------------------------------|  [lista de arquivos]
+          | tool_result(success, files)   |                               |
+          |<------------------------------|                               |
+          |                               |                               |
+          | Constrói BootstrapContext     |                               |
+          |------------------------------>|  bootstrap_finished           |
+          |                               |                               |
+          v                               v                               v
 
-    Note over Backend: Backend ENVIA comandos ⬇️
-    Backend->>Exec: run_tool(GetWorkingDirectory)
-    Note over Exec: Executor EXECUTA localmente
-    Exec->>FS: pwd (comando local)
-    FS->>Exec: /home/user/project
-    Note over Exec: Executor RETORNA resultado ⬆️
-    Exec->>Backend: tool_result(success, "/home/user/project")
-  
-    Backend->>Exec: run_tool(ReadFolder, ".")
-    Exec->>FS: ls -la (comando local)
-    FS->>Exec: [lista de arquivos]
-    Exec->>Backend: tool_result(success, files)
-  
-    Backend->>Backend: Constrói BootstrapContext
-    Backend->>Exec: bootstrap_finished
+
 ```
 
 **Nota:** O Backend **nunca acessa** o filesystem diretamente. Ele **pede** ao Executor.
 
-### 3. 🔄 Task Execution Loop
+### 3. Task Execution Loop
 
-```mermaid
-sequenceDiagram
-    participant Backend as Backend (Maestro)
-    participant LLM as LLM Client
-    participant Exec as Executor (Local)
-    participant Redis as Redis
+```ascii
++---------------------+        +-------------+        +---------------------+        +--------+
+| Backend (Maestro)   |        | LLM Client  |        | Executor (Local)    |        | Redis  |
++---------------------+        +-------------+        +---------------------+        +--------+
+          |                          |                          |                       |
+          | prompt + contexto        |                          |                       |
+          |------------------------->|                          |                       |
+          |<-------------------------|  "preciso ler main.py"   |                       |
+          |                          |                          |                       |
+          | run_tool(ReadFile,main)  |                          |                       |
+          |---------------------------------------------------->|                       |
+          |                          |    fs.readFileSync(...)  |                       |
+          |                          |<-------------------------|  tool_result(success) |
+          |<----------------------------------------------------|                       |
+          |                          |                          |                       |
+          | continua com contexto    |                          |                       |
+          |------------------------->|                          |                       |
+          |<-------------------------|  "vou criar endpoint..." |                       |
+          |                          |                          |                       |
+          | publish logs/progresso   |                          |                       |
+          |--------------------------------------------------------------->|  Stream log
+          | agent_message_delta      |                          |                       |
+          |---------------------------------------------------->|                       |
+          v                          v                          v                       v
 
-    Backend->>LLM: Gerar resposta + tools necessárias
-    LLM->>Backend: "Preciso ler o arquivo main.py"
-    Note over Backend: Backend ORQUESTRA ⬇️
-    Backend->>Exec: run_tool(ReadFile, "main.py")
-    Note over Exec: Executor EXECUTA
-    Exec->>Exec: fs.readFileSync("main.py")
-    Note over Exec: Executor RETORNA ⬆️
-    Exec->>Backend: tool_result(success, file_content)
-    Backend->>LLM: Continua com contexto do arquivo
-    LLM->>Backend: "Vou criar o endpoint..."
-    Backend->>Redis: Publica log de streaming
-    Backend->>Exec: agent_message_delta (progresso)
+
 ```
 
 **Nota:** O Backend é o **cérebro** (decide), o Executor são as **mãos** (executa).
 
-### 4. 🔧 Tool Call Flow
+### 4. Tool Call Flow
 
-```python
-# Backend (Maestro): Decide executar tool e ENVIA comando ⬇️
-await self.communicator.send_message("run_tool", {
-    "tool_name": "Shell",
-    "tool_id": str(uuid.uuid4()),
-    "generation_id": self._current_generation_id,
-    "parameters": {"command": "npm test", "dir_path": "."}
-})
-```
+```ascii
++---------------------+        +-------------+        +---------------------+        +-------------------+
+| Backend (Maestro)   |        | LLM Client  |        | Executor (Local)    |        | OS / Shell         |
++---------------------+        +-------------+        +---------------------+        +-------------------+
+          |                          |                          |                          |
+          | pergunta/continua        |                          |                          |
+          |------------------------->|                          |                          |
+          |<-------------------------|  "usar Shell npm test"   |                          |
+          |                          |                          |                          |
+          | run_tool(Shell, uuid-123, params)                   |                          |
+          |---------------------------------------------------->|                          |
+          |                          |                          |  exec: npm test          |
+          |                          |                          |------------------------->|
+          |                          |                          |<-------------------------|  stdout/stderr+code
+          | tool_result(uuid-123, success|error, stdout, stderr)|                          |
+          |<----------------------------------------------------|                          |
+          | valida + decide próximos passos                     |                          |
+          v                          v                          v                          v
 
-```typescript
-// Executor (Local): RECEBE comando, EXECUTA localmente
-const result = await this.tools.Shell.execute({
-    command: "npm test",
-    dir_path: "."
-});
-
-// Executor: RETORNA resultado ⬆️
-await this.websocket.send({
-    type: "tool_result",
-    payload: {
-        tool_id: "uuid-123",
-        status: result.success ? "success" : "error", 
-        result: result.stdout,
-        error: result.stderr
-    }
-});
 ```
 
 **Fluxo:**
@@ -114,28 +120,44 @@ await this.websocket.send({
 4. Executor **retorna** resultado para Backend
 5. Backend **valida** e decide próximo passo
 
-### 5. ⚠️ Error Handling Flow
+### 5. Error Handling Flow
+**(A) Erro de WebSocket / reconexão**
+```ascii
++---------------------+        +---------------------+        +------------------+
+| Executor (Local)    |        | Backend (Remoto)    |        | State/Reducer     |
++---------------------+        +---------------------+        +------------------+
+          |                               |                          |
+          | websocket error               |                          |
+          |------------------------------>|                          |
+          | DISPATCH(CONNECTION_ERROR)    |                          |
+          |--------------------------------------------------------->|
+          | reconnectWithBackoff()        |                          |
+          |--- try 1 -------------------->|  connect                 |
+          |<------------------------------|  fail                    |
+          |--- try 2 -------------------->|  connect                 |
+          |<------------------------------|  accepted                |
+          | DISPATCH(CONNECTION_RESTORED) |                          |
+          |--------------------------------------------------------->|
+          v                               v                          v
+```
 
-```typescript
-// Executor: Handle WebSocket errors
-this.websocket.on('error', (error) => {
-    this.dispatch({ 
-        type: 'CONNECTION_ERROR', 
-        payload: { error: error.message }
-    });
-  
-    // Attempt reconnection with exponential backoff
-    this.reconnectWithBackoff();
-});
+**(B) Erro de Tool (backend recebe tool_result error e decide fallback)**
+```ascii
++---------------------+        +---------------------+        +-------------+
+| Backend (Maestro)   |        | Executor (Local)    |        | LLM Client   |
++---------------------+        +---------------------+        +-------------+
+          |                               |                          |
+          | run_tool(tool_id=uuid-999)    |                          |
+          |------------------------------>|                          |
+          |                               | executa tool e falha     |
+          |                               |--------------------------|
+          | tool_result(status=error, err)|                          |
+          |<------------------------------|                          |
+          | anexa erro ao histórico       |                          |
+          |------------------------------>|  (interno)               |
+          | replanejar com erro no ctx    |                          |
+          |--------------------------------------------------------->|
+          |<---------------------------------------------------------|  "tentar alternativa / abortar"
+          v                               v                          v
 
-// Backend: Handle tool execution errors  
-if tool_result.status == "error":
-    self.history.append(UniversalMessage(
-        role="tool",
-        content={
-            "tool_call_id": tool_call.id,
-            "name": tool_call.name, 
-            "response": {"error": tool_result.error}
-        }
-    ))
 ```

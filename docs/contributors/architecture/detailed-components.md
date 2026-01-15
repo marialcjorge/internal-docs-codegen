@@ -1,6 +1,6 @@
 # Componentes
 
-### 🎯 Backend Components
+### Backend Components
 
 | Componente                     | Responsabilidade                                        | Arquivo Principal                   |
 | ------------------------------ | ------------------------------------------------------- | ----------------------------------- |
@@ -12,7 +12,7 @@
 | **TaskService**          | Business logic para tasks e logs                        | `app/services/task_service.py`    |
 | **SessionService**       | Gerencia sessões persistentes no Redis                 | `app/services/session_service.py` |
 
-### ⚡ Executor Components
+### Executor Components
 
 | Componente                  | Responsabilidade                                      | Arquivo Principal           |
 | --------------------------- | ----------------------------------------------------- | --------------------------- |
@@ -23,7 +23,7 @@
 | **Version Check**     | Validação de compatibilidade com backend            | `versionCheck.ts`         |
 | **Event System**      | Sistema de eventos interno                            | `events.ts`, `types.ts` |
 
-### 🔧 Tools Disponíveis (Executor)
+### Tools Disponíveis (Executor)
 
 | Tool                 | Funcionalidade                 | Casos de Uso                                |
 | -------------------- | ------------------------------ | ------------------------------------------- |

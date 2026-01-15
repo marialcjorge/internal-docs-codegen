@@ -11,13 +11,13 @@ import Admonition from '@theme/Admonition';
 
 O **CodeGen** é um assistente de geração de código avançado que opera via CLI. Ele atua como um agente orquestrador capaz de manipular diretamente o repositório de código, executar comandos de build e teste, e validar suas próprias alterações.
 
-## ✅ O que o sistema faz
+## O que o sistema faz
 
 - **Geração** de código com contexto profundo.
 - **Execução autônoma** de comandos.
 - **Orquestração de tarefas complexas** via Agentes (Maestro).
 
-## ❌ O que não faz
+## O que não faz
 
 - Não é apenas um "autocomplete" de código
 - Não substitui totalmente a revisão humana (possui guardrails)
@@ -33,6 +33,6 @@ O **CodeGen** é um assistente de geração de código avançado que opera via C
 | Comunicação | WebSockets & Redis Streams - Para feedback em tempo real                        |
 | Banco de Dados | PostgreSQL (SQLAlchemy) & Redis (Cache/Sessão).                               |
 
-<Admonition type="info" title="Nota de Arquitetura">
+:::info Nota de Arquitetura
 O sistema não é apenas um autocomplete, ele é um agente orquestrador completo.
-</Admonition>
+:::
